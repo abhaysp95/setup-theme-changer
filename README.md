@@ -6,7 +6,7 @@ Just select the theme and it'll change it for every tools you use.
 
 Watch this little demo:
 
-[demo1](sc_vid/demo1.gif)
+![demo1](sc_vid/demo1.gif)
 
 ## currently supported tools
 
@@ -39,3 +39,11 @@ Note:
 * [alacritty](https://github.com/coolabhays/my-config-files/tree/master/.config/alacritty)
 * [termite](https://github.com/coolabhays/my-config-files/tree/master/.config/termite)
 * [Xresources](https://github.com/coolabhays/my-config-files/tree/master/.config/xresources_colors)
+
+
+## dependencies:
+
+* gnu-sed
+* fzf
+* find
+* tools which you want to change theme of
