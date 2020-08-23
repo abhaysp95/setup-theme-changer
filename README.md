@@ -6,11 +6,7 @@ Just select the theme and it'll change it for every tools you use.
 
 Watch this little demo:
 
-<p align="center">
-	<video width="1366" height="768" controls>
-		<source src="sc_vid/demo1.mkv">
-	</video>
-</p>
+[demo1](sc_vid/demo1.gif)
 
 ## currently supported tools
 
