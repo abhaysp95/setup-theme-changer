@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
+# TODO:
+# thing of to make this root unaffected
+
 # get the theme in file
 theme_file="/tmp/vim-colorschemes"
 prev_theme_name="/tmp/vim-prev-theme"
-vim_colors_file="${HOME}/.config/nvim/modules/color_settings.vim"
+vim_colors_file="/home/$(logname)/.config/nvim/modules/color_settings.vim"
 # vim_colors_file="${HOME}/.cache/temp/sh_files/.vimrc"
 
 function gen_file() {
