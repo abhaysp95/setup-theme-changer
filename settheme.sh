@@ -208,12 +208,14 @@ function change_colorschemes() {
 	foreground_xresources=$(sed -n -e 's/^\s*\*.\?foreground\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 
 	change_colorscheme_bspwm
+	change_colorscheme_dmenu
 	change_colorscheme_dunst
 	change_colorscheme_rofi
 
-	if [[ "${USER}" = root ]]; then
-		change_colorscheme_dmenu
-	fi
+	# no need of this right now
+	#if [[ "${USER}" = root ]]; then
+		#change_colorscheme_dmenu
+	#fi
 }
 
 function gen_theme_file() {
