@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+# TODO:
+# add dmenu config.h for theming
+# divide script with verbose or quiet
+# make sed to make the backup file before writing original one
+
 # check if colorscheme name file exist(update it)
 # this will automatically remove and put the new one in place(/tmp/vim-colorschemes)
 # . ~/.cache/temp/sh_files/vcolors.sh --gen # this will executes the script as this script process
@@ -7,20 +12,21 @@
 # change colorscheme for terminal
 #. ~/.cache/temp/sh_files/vcolors.sh -c # this will executes the script as this script process
 #echo "${SELECTED_THEME_NAME}"
-alacritty_theme_path="${HOME}/.config/alacritty/alacritty_themes"
-alacritty_config="${HOME}/.config/alacritty"
-termite_theme_path="${HOME}/.config/termite/termite_themes"
-termite_config="${HOME}/.config/termite"
-xresources_theme_path="${HOME}/.config/xresources_colors/"
-dunst_config="${HOME}/.config/dunst/dunstrc"
-rofi_config="${HOME}/.config/rofi/config.rasi"
-bspwm_config="${HOME}/.config/bspwm/bspwmrc"
+alacritty_theme_path="/home/$(logname)/.config/alacritty/alacritty_themes"
+alacritty_config="/home/$(logname)/.config/alacritty"
+termite_theme_path="/home/$(logname)/.config/termite/termite_themes"
+termite_config="/home/$(logname)/.config/termite"
+xresources_theme_path="/home/$(logname)/.config/xresources_colors/"
+dunst_config="/home/$(logname)/.config/dunst/dunstrc"
+rofi_config="/home/$(logname)/.config/rofi/config.rasi"
+bspwm_config="/home/$(logname)/.config/bspwm/bspwmrc"
+dmenu_config="/home/$(logname)/Downloads/git-materials/dmenu_mybuild/config.h"
 
 
 selected_theme=""
 function change_colorscheme_terminal() {
 	# change colorscheme for n/vim
-	. ~/.cache/temp/sh_files/vcolors.sh -c # this will executes the script as this script process
+	. vcolors.sh -c # this will executes the script as this script process
 	selected_theme="${SELECTED_THEME_NAME}"
 	# echo "${selected_theme}"
 
@@ -163,6 +169,36 @@ function change_colorscheme_bspwm() {
 	sleep 1  # give time to properly load wm
 }
 
+function change_colorscheme_dmenu() {
+	schemesel2=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	schemeselhighlight2=$(sed -n -e 's/^\s*\*.\?color4\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	schemenormhighlight1=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	schemeout2=$(sed -n -e 's/^\s*\*.\?color12\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	schememid2=$(sed -n -e 's/^\s*\*.\?color2\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+
+	sed -i -e "s/\(^\s*\[SchemeNorm\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${foreground_xresources}\"\2/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeNorm\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${background_xresources}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeSel\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${foreground_xresources}\"\2/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeSel\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemesel2}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeSelHighlight\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemeselhighlight2}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeNormHighlight\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${schemenormhighlight1}\"\2/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeOut\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${background_xresources}\"\2/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeOut\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemeout2}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeMid\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schememid2}\"/" "${dmenu_config}"
+
+	printf "Colors after changing:\n\n"
+	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNorm\].*/p" "${dmenu_config}")"
+	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSel\].*/p" "${dmenu_config}")"
+	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSelHighlight\].*/p" "${dmenu_config}")"
+	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNormHighlight\].*/p" "${dmenu_config}")"
+	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeOut\].*/p" "${dmenu_config}")"
+	printf "%s\n\n" "$(sed -n -e "/^\s*\[SchemeMid\].*/p" "${dmenu_config}")"
+
+	#cd "/home/$(logname)/Downloads/git-materials/dmenu_mybuild"
+	#make install
+	#cd -
+}
+
 function change_colorschemes() {
 	change_colorscheme_terminal
 	change_colorscheme_xresources
@@ -174,6 +210,10 @@ function change_colorschemes() {
 	change_colorscheme_bspwm
 	change_colorscheme_dunst
 	change_colorscheme_rofi
+
+	if [[ "${USER}" = root ]]; then
+		change_colorscheme_dmenu
+	fi
 }
 
 function gen_theme_file() {
@@ -199,6 +239,8 @@ Note: if no argument is provided then it'll be default to changing colorscheme.
 
 Currently supported for n/vim, alacritty, termite, Xresources, polybar(with xresources), dunst and rofi
 
+You have to compile dmenu yourself for now after runnning this script, work in progress
+
 EOH
 }
 
@@ -207,6 +249,7 @@ case $1 in
 	-c|--colorscheme|'') change_colorschemes ;;
 	--gen) gen_theme_file ;;
 	-bg|--background) change_vim_background $2 ;;
-	--check) echo "No function to check currently" ;;
+	# --check) echo "No function to check currently" ;;
+	--check) change_colorscheme_dmenu ;;
 	*) printf "Error! Invalid argument\tTry --help" ;;
 esac
