@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # TODO:
-# add dmenu config.h for theming
-# divide script with verbose or quiet
-# make sed to make the backup file before writing original one
+# try to add support for dmenu auto-compalitation from this script
+# this requires script to support root
+# if user root doesn't run it as root then it should perform rest operation except for dmenu
 
 # check if colorscheme name file exist(update it)
 # this will automatically remove and put the new one in place(/tmp/vim-colorschemes)
@@ -94,7 +94,7 @@ function change_colorscheme_xresources() {
 		if [ -f "${xresources_theme_path}/${selected_file}" ]; then
 			echo "Selected file is: ${selected_file}"
 			echo "Changing colorscheme"
-			cat "${xresources_theme_path}"/"${selected_file}" "${xresources_theme_path}/base.Xresources" > ${HOME}/.Xresources
+			cat "${xresources_theme_path}"/"${selected_file}" "${xresources_theme_path}/base.Xresources" > /home/$(logname)/.Xresources
 			xrdb ~/.Xresources  # get and set content
 			echo "Changed successfully"
 		else
@@ -186,7 +186,7 @@ function change_colorscheme_dmenu() {
 	sed -i -e "s/\(^\s*\[SchemeOut\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemeout2}\"/" "${dmenu_config}"
 	sed -i -e "s/\(^\s*\[SchemeMid\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schememid2}\"/" "${dmenu_config}"
 
-	printf "Colors after changing:\n\n"
+	printf "\nColors after changing:\n\n"
 	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNorm\].*/p" "${dmenu_config}")"
 	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSel\].*/p" "${dmenu_config}")"
 	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSelHighlight\].*/p" "${dmenu_config}")"
