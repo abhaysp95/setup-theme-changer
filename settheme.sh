@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # TODO:
-# add dmenu config.h for theming
-# divide script with verbose or quiet
-# make sed to make the backup file before writing original one
+# add support to compile dmenu
+# add verbose and non-verbose mode
+# add support for select in case user don't have fzf
 
 # check if colorscheme name file exist(update it)
 # this will automatically remove and put the new one in place(/tmp/vim-colorschemes)
