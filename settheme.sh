@@ -121,11 +121,15 @@ function change_colorscheme_dunst() {
 	sleep 0.5;
 	notify-send -t 3000 "Dunst Reloaded"
 
-	# print dunst changed color output
-	printf "\n%s\n\n" "Colors for dunst on urgency_normal are: "
-	printf "%s\n" "$(sed -n -E "/urgency_normal/,/^\s*$/s/(^\s*background\s*=\s*\".+\")/\1/p" "${dunst_config}")"
-	printf "%s\n" "$(sed -n -E "/urgency_normal/,/^\s*$/s/(^\s*foreground\s*=\s*\".+\")/\1/p" "${dunst_config}")"
-	printf "%s\n\n" "$(sed -n -e "0,/\(^\s*frame_color\s*=\s*\".\+\"\)/s//\1/p" "${dunst_config}")"
+	# print dunst changed color output, if verbose
+	if [ -n "$1" ]; then
+		printf "\n%s\n\n" "Colors for dunst on urgency_normal are: "
+		printf "%s\n" "$(sed -n -E "/urgency_normal/,/^\s*$/s/(^\s*background\s*=\s*\".+\")/\1/p" "${dunst_config}")"
+		printf "%s\n" "$(sed -n -E "/urgency_normal/,/^\s*$/s/(^\s*foreground\s*=\s*\".+\")/\1/p" "${dunst_config}")"
+		printf "%s\n\n" "$(sed -n -e "0,/\(^\s*frame_color\s*=\s*\".\+\"\)/s//\1/p" "${dunst_config}")"
+	else
+		echo "Colors for dunst changed"
+	fi
 }
 
 function change_colorscheme_rofi() {
@@ -138,13 +142,17 @@ function change_colorscheme_rofi() {
 	sed -i -e "s/\(^\s*winbg\s*:\s*\)[#[:alnum:]]\+;/\1${background_xresources};/" "${rofi_config}"
 
 	# print rofi changed color ouptut
-	printf "\n%s\n\n" "Colors for rofi are: "
-	printf "%s\n" "$(sed -n -e "/^\s*background-color\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*text-color\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*selbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*actbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*urgbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
-	printf "%s\n\n" "$(sed -n -e "/^\s*winbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+	if [ -n "$1" ]; then
+		printf "\n%s\n\n" "Colors for rofi are: "
+		printf "%s\n" "$(sed -n -e "/^\s*background-color\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*text-color\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*selbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*actbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*urgbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+		printf "%s\n\n" "$(sed -n -e "/^\s*winbg\s*:\s*[#[:alnum:]]\+;/p" "${rofi_config}")"
+	else
+		echo "Colors for rofi changed"
+	fi
 }
 
 function change_colorscheme_bspwm() {
@@ -153,10 +161,15 @@ function change_colorscheme_bspwm() {
 	sed -i -e "s/\(^.*active_border_color\s*\)\"[#[:alnum:]]\+\"$/\1\"${background_xresources}\"/" "${bspwm_config}"
 	sed -i -e "s/\(^.*focused_border_color\s*\)\"[#[:alnum:]]\+\"$/\1\"${foreground_xresources}\"/" "${bspwm_config}"
 
-	printf "\n%s\n\n" "Colors changed for bspwm borders are: "
-	sed -n -e "/^.*normal_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
-	sed -n -e "/^.*active_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
-	sed -n -e "/^.*focused_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
+	if [ -n "$1" ]; then
+		printf "\n%s\n\n" "Colors changed for bspwm borders are: "
+		sed -n -e "/^.*normal_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
+		sed -n -e "/^.*active_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
+		sed -n -e "/^.*focused_border_color\s*\"[#[:alnum:]]\+\"$/p" "${bspwm_config}"
+		echo "Restarting bspwm"
+	else
+		echo "Colors for bspwm changed, restarting"
+	fi
 
 	bspc wm -r  # reload the wm(reloads the polybar)
 	sleep 1  # give time to properly load wm
@@ -173,13 +186,17 @@ function change_colorscheme_dmenu() {
 	sed -i -e "s/\(^\s*\[SchemeOut\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color12}\"/" "${dmenu_config}"
 	sed -i -e "s/\(^\s*\[SchemeMid\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color2}\"/" "${dmenu_config}"
 
-	printf "\nColors after changing:\n\n"
-	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNorm\].*/p" "${dmenu_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSel\].*/p" "${dmenu_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSelHighlight\].*/p" "${dmenu_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNormHighlight\].*/p" "${dmenu_config}")"
-	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeOut\].*/p" "${dmenu_config}")"
-	printf "%s\n\n" "$(sed -n -e "/^\s*\[SchemeMid\].*/p" "${dmenu_config}")"
+	if [ -n "$1" ]; then
+		printf "\nColors after changing:\n\n"
+		printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNorm\].*/p" "${dmenu_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSel\].*/p" "${dmenu_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*\[SchemeSelHighlight\].*/p" "${dmenu_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNormHighlight\].*/p" "${dmenu_config}")"
+		printf "%s\n" "$(sed -n -e "/^\s*\[SchemeOut\].*/p" "${dmenu_config}")"
+		printf "%s\n\n" "$(sed -n -e "/^\s*\[SchemeMid\].*/p" "${dmenu_config}")"
+	else
+		echo "Colors for dmenu changed, please compile it again to see effect"
+	fi
 
 	#cd "/home/$(logname)/Downloads/git-materials/dmenu_mybuild"
 	#make install
@@ -206,25 +223,30 @@ function change_colorscheme_zathura() {
 	sed -i -e "s/\(.*recolor-darkcolor\s*\)\".*\"/\1\"${foreground_xresources}\"/" "${zathura_config}"
 	sed -i -e "s/\(.*recolor-lightcolor\s*\)\".*\"/\1\"${background_xresources}\"/" "${zathura_config}"
 
-	printf "\nColors after change:\n\n"
-	sed -n -e "/.*default-bg/p" "${zathura_config}"
-	sed -n -e "/.*default-fg/p" "${zathura_config}"
-	sed -n -e "/.*statusbar-bg/p" "${zathura_config}"
-	sed -n -e "/.*statusbar-fg/p" "${zathura_config}"
-	sed -n -e "/.*inputbar-bg/p" "${zathura_config}"
-	sed -n -e "/.*inputbar-fg/p" "${zathura_config}"
-	sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
-	sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
-	sed -n -e "/.*highlight-color/p" "${zathura_config}"
-	sed -n -e "/.*highlight-active-color/p" "${zathura_config}"
-	sed -n -e "/.*completion-highlight-bg/p" "${zathura_config}"
-	sed -n -e "/.*completion-highlight-fg/p" "${zathura_config}"
-	sed -n -e "/.*completion-bg/p" "${zathura_config}"
-	sed -n -e "/.*completion-fg/p" "${zathura_config}"
-	sed -n -e "/.*notification-bg/p" "${zathura_config}"
-	sed -n -e "/.*notification-fg/p" "${zathura_config}"
-	sed -n -e "/.*recolor-darkcolor/p" "${zathura_config}"
-	sed -n -e "/.*recolor-lightcolor/p" "${zathura_config}"
+	# [ -n "$1" ] && echo "Argument $1 recieved"
+	if [ -n "$1" ]; then
+		printf "\nColors after change:\n\n"
+		sed -n -e "/.*default-bg/p" "${zathura_config}"
+		sed -n -e "/.*default-fg/p" "${zathura_config}"
+		sed -n -e "/.*statusbar-bg/p" "${zathura_config}"
+		sed -n -e "/.*statusbar-fg/p" "${zathura_config}"
+		sed -n -e "/.*inputbar-bg/p" "${zathura_config}"
+		sed -n -e "/.*inputbar-fg/p" "${zathura_config}"
+		sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
+		sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
+		sed -n -e "/.*highlight-color/p" "${zathura_config}"
+		sed -n -e "/.*highlight-active-color/p" "${zathura_config}"
+		sed -n -e "/.*completion-highlight-bg/p" "${zathura_config}"
+		sed -n -e "/.*completion-highlight-fg/p" "${zathura_config}"
+		sed -n -e "/.*completion-bg/p" "${zathura_config}"
+		sed -n -e "/.*completion-fg/p" "${zathura_config}"
+		sed -n -e "/.*notification-bg/p" "${zathura_config}"
+		sed -n -e "/.*notification-fg/p" "${zathura_config}"
+		sed -n -e "/.*recolor-darkcolor/p" "${zathura_config}"
+		sed -n -e "/.*recolor-lightcolor/p" "${zathura_config}"
+	else
+		echo "Colors for zathura changed"
+	fi
 }
 
 function change_colorschemes() {
@@ -252,11 +274,11 @@ function change_colorschemes() {
 	color14=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 	color15=$(sed -n -e 's/^\s*\*.\?color15\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 
-	change_colorscheme_bspwm
-	change_colorscheme_dmenu
-	change_colorscheme_dunst
-	change_colorscheme_rofi
-	change_colorscheme_zathura
+	change_colorscheme_bspwm "$1"
+	change_colorscheme_dmenu "$1"
+	change_colorscheme_dunst "$1"
+	change_colorscheme_rofi "$1"
+	change_colorscheme_zathura "$1"
 
 	#if [[ "${USER}" = root ]]; then
 		#change_colorscheme_dmenu
@@ -298,5 +320,10 @@ case $1 in
 	-bg|--background) change_vim_background $2 ;;
 	# --check) echo "No function to check currently" ;;
 	--check) change_colorscheme_zathura ;;
+	-v|--verbose)
+		case $2 in
+			-c|--colorscheme|'') change_colorschemes "$1" ;;
+			*) printf "Error! Invalid argument\tTry --help" ;;
+		esac ;;
 	*) printf "Error! Invalid argument\tTry --help" ;;
 esac
