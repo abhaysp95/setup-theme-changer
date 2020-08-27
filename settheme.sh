@@ -21,6 +21,7 @@ bspwm_config="/home/$(logname)/.config/bspwm/bspwmrc"
 dmenu_config="/home/$(logname)/Downloads/git-materials/dmenu_mybuild/config.h"
 zathura_config="/home/$(logname)/.config/zathura/zathurarc"
 
+PS3="Select the file: "
 
 selected_theme=""
 function change_colorscheme_terminal() {

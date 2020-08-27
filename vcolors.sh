@@ -9,6 +9,8 @@ prev_theme_name="/tmp/vim-prev-theme"
 vim_colors_file="/home/$(logname)/.config/nvim/modules/color_settings.vim"
 # vim_colors_file="${HOME}/.cache/temp/sh_files/.vimrc"
 
+PS3="Select the file: "
+
 function gen_file() {
 	[ -f "${theme_file}" ] && rm "${theme_file}"
 	nvim -esc \
