@@ -2,7 +2,6 @@
 
 # TODO:
 # add support to compile dmenu
-# add support for select in case user don't have fzf
 
 # check if colorscheme name file exist(update it)
 # this will automatically remove and put the new one in place(/tmp/vim-colorschemes)
@@ -37,7 +36,14 @@ function change_colorscheme_terminal() {
 		theme_files_count="${#theme_files[@]}"
 		if [ ${theme_files_count} -gt 1 ]; then
 			echo "Found more than with this colorscheme"
-			selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+			if [ -n $(echo "${PATH}" | grep -io fzf) ]; then
+				selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+			else
+				select selected_file in "${theme_files[@]}"; do
+					echo "you selected ${selected_file}"
+					break
+				done
+			fi
 		else
 			selected_file="${theme_files}"
 		fi
@@ -59,7 +65,14 @@ function change_colorscheme_terminal() {
 		theme_files_count="${#theme_files[@]}"
 		if [ ${theme_files_count} -gt 1 ]; then
 			echo "Found more than with this colorscheme"
-			selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+			if [ -n $(echo "${PATH}" | grep -io fzf) ]; then
+				selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+			else
+				select selected_file in "${theme_files[@]}"; do
+					echo "you selected ${selected_file}"
+					break
+				done
+			fi
 		else
 			selected_file="${theme_files}"
 		fi
@@ -86,7 +99,14 @@ function change_colorscheme_xresources() {
 	theme_files_count="${#theme_files[@]}"
 	if [ ${theme_files_count} -gt 1 ]; then
 		echo "Found more than with this colorscheme"
-		selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+		if [ -n "$(echo ${PATH} | grep -io fzf)" ]; then
+			selected_file=$(echo "${theme_files[@]}" | sed -e 's/ /\n/g' | fzf --prompt "Select file:" --border sharp --height 25%)
+		else
+			select selected_file in "${theme_files[@]}"; do
+				echo "you selected ${selected_file}"
+				break
+			done
+		fi
 	else
 		selected_file="${theme_files}"
 	fi

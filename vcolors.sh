@@ -28,18 +28,26 @@ function change_colorschme() {
 	theme_in_file=$(grep -o "^colorscheme\s[-_a-zA-Z0-9]\+$" "${vim_colors_file}" | cut -d' ' -f 2)
 	echo "Your current nvim colorscheme is ${theme_in_file}"
 
-	sleep 0.1
+	sleep 0.05
 
 	# put the theme names in the file
 	nvim -esc \
 		"put=getcompletion('', 'color') \
 		|put=globpath('~/.config/nvim/plugged/*/colors', '*.vim', 0, 1) \
 		|execute('%s/.*\/\([^/]*\).vim*$/\1/')" "${theme_file}" -c wq
-	scheme_name=$(cat "${theme_file}" \
-		| fzf \
-			--prompt "Select theme name: " \
-			--border sharp \
-			--height 45%)
+	if [ -n $(echo "${PATH}" | grep -io fzf) ]; then
+		scheme_name=$(cat "${theme_file}" \
+			| fzf \
+				--prompt "Select theme name: " \
+				--border sharp \
+				--height 45%)
+	else
+		scheme_names=($(cat "${theme_file}" | sed 's/\n/ /g'))
+		select scheme_name in "${scheme_names[@]}"; do
+			echo "Selected theme for vim: ${scheme_name}"
+			break
+		done
+	fi
 	if [ "${scheme_name}" != "${theme_in_file}" ]; then
 		if [ -z "${scheme_name}" ]; then
 			echo "No colorscheme choosen"
