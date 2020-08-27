@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # TODO:
-# try to add support for dmenu auto-compalitation from this script
-# this requires script to support root
-# if user root doesn't run it as root then it should perform rest operation except for dmenu
+# add dmenu config.h for theming
+# divide script with verbose or quiet
+# make sed to make the backup file before writing original one
 
 # check if colorscheme name file exist(update it)
 # this will automatically remove and put the new one in place(/tmp/vim-colorschemes)
@@ -21,6 +21,7 @@ dunst_config="/home/$(logname)/.config/dunst/dunstrc"
 rofi_config="/home/$(logname)/.config/rofi/config.rasi"
 bspwm_config="/home/$(logname)/.config/bspwm/bspwmrc"
 dmenu_config="/home/$(logname)/Downloads/git-materials/dmenu_mybuild/config.h"
+zathura_config="/home/$(logname)/.config/zathura/zathurarc"
 
 
 selected_theme=""
@@ -199,6 +200,58 @@ function change_colorscheme_dmenu() {
 	#cd -
 }
 
+function change_colorscheme_zathura() {
+	background_xresources=$(sed -n -e 's/^\s*\*.\?background\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	foreground_xresources=$(sed -n -e 's/^\s*\*.\?foreground\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color8=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color14=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color1=$(sed -n -e 's/^\s*\*.\?color1\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color0=$(sed -n -e 's/^\s*\*.\?color0\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color5=$(sed -n -e 's/^\s*\*.\?color5\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color8=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color11=$(sed -n -e 's/^\s*\*.\?color11\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color4=$(sed -n -e 's/^\s*\*.\?color4\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+
+	sed -i -e "s/\(.*default-bg\s*\)\".*\"/\1\"${background_xresources}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*default-fg\s*\)\".*\"/\1\"${foreground_xresources}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*statusbar-bg\s*\)\".*\"/\1\"${color8}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*statusbar-fg\s*\)\".*\"/\1\"${color14}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*inputbar-bg\s*\)\".*\"/\1\"${background_xresources}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*inputbar-fg\s*\)\".*\"/\1\"${foreground_xresources}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*notification-warning-bg\s*\)\".*\"/\1\"${color1}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*notification-warning-bg\s*\)\".*\"/\1\"${color0}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*highlight-color\s*\)\".*\"/\1\"${color6}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*highlight-active-color\s*\)\".*\"/\1\"${color12}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*completion-highlight-bg\s*\)\".*\"/\1\"${color5}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*completion-highlight-fg\s*\)\".*\"/\1\"${color0}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*completion-bg\s*\)\".*\"/\1\"${color8}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*completion-fg\s*\)\".*\"/\1\"${color11}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*notification-bg\s*\)\".*\"/\1\"${color4}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*notification-fg\s*\)\".*\"/\1\"${color0}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*recolor-darkcolor\s*\)\".*\"/\1\"${foreground_xresources}\"/" "${zathura_config}"
+	sed -i -e "s/\(.*recolor-lightcolor\s*\)\".*\"/\1\"${background_xresources}\"/" "${zathura_config}"
+
+	printf "\nColors after change:\n\n"
+	sed -n -e "/.*default-bg/p" "${zathura_config}"
+	sed -n -e "/.*default-fg/p" "${zathura_config}"
+	sed -n -e "/.*statusbar-bg/p" "${zathura_config}"
+	sed -n -e "/.*statusbar-fg/p" "${zathura_config}"
+	sed -n -e "/.*inputbar-bg/p" "${zathura_config}"
+	sed -n -e "/.*inputbar-fg/p" "${zathura_config}"
+	sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
+	sed -n -e "/.*notification-warning-bg/p" "${zathura_config}"
+	sed -n -e "/.*highlight-color/p" "${zathura_config}"
+	sed -n -e "/.*highlight-active-color/p" "${zathura_config}"
+	sed -n -e "/.*completion-highlight-bg/p" "${zathura_config}"
+	sed -n -e "/.*completion-highlight-fg/p" "${zathura_config}"
+	sed -n -e "/.*completion-bg/p" "${zathura_config}"
+	sed -n -e "/.*completion-fg/p" "${zathura_config}"
+	sed -n -e "/.*notification-bg/p" "${zathura_config}"
+	sed -n -e "/.*notification-fg/p" "${zathura_config}"
+	sed -n -e "/.*recolor-darkcolor/p" "${zathura_config}"
+	sed -n -e "/.*recolor-lightcolor/p" "${zathura_config}"
+}
+
 function change_colorschemes() {
 	change_colorscheme_terminal
 	change_colorscheme_xresources
@@ -212,7 +265,6 @@ function change_colorschemes() {
 	change_colorscheme_dunst
 	change_colorscheme_rofi
 
-	# no need of this right now
 	#if [[ "${USER}" = root ]]; then
 		#change_colorscheme_dmenu
 	#fi
@@ -252,6 +304,6 @@ case $1 in
 	--gen) gen_theme_file ;;
 	-bg|--background) change_vim_background $2 ;;
 	# --check) echo "No function to check currently" ;;
-	--check) change_colorscheme_dmenu ;;
+	--check) change_colorscheme_zathura ;;
 	*) printf "Error! Invalid argument\tTry --help" ;;
 esac
