@@ -107,9 +107,6 @@ function change_colorscheme_xresources() {
 }
 
 function change_colorscheme_dunst() {
-	# get the colors first
-	grey_xresources=$(sed -n -e 's/^\s*\*.\?color7\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-
 	# change in dunstrc color file, # changing only for normal_urgency(which is most used)
 	# awk -v color="$background_xresources" -i inplace -e '/background/{c++;if(c==2){sub("background.*[#a-fA-F0-9]+", "background = \"color");c=0}}1' dunstrc
 	# don't understand what's wrong with above one(awk's), it's just not expanding the awk variable color for substitution
@@ -118,7 +115,7 @@ function change_colorscheme_dunst() {
 	sed -i -E "/urgency_normal/,/^\s*$/s/(^\s*background\s*=\s*)\".+\"/\1\"${background_xresources}\"/" "${dunst_config}"
 	sed -i -E "/urgency_normal/,/^\s*$/s/(^\s*foreground\s*=\s*)\".+\"/\1\"${foreground_xresources}\"/" "${dunst_config}"
 	# from line 0 to first frame_color, and then replace, // means
-	sed -i -e "0,/\(^\s*frame_color\s*=\s*\)\".\+\"/s//\1\"${grey_xresources}\"/" "${dunst_config}"
+	sed -i -e "0,/\(^\s*frame_color\s*=\s*\)\".\+\"/s//\1\"${color7}\"/" "${dunst_config}"
 
 	# restart dunst
 	[ -n "$(pidof dunst)" ] && kill "$(pidof dunst)" && dunst 2>/dev/null &
@@ -133,16 +130,12 @@ function change_colorscheme_dunst() {
 }
 
 function change_colorscheme_rofi() {
-	# get the colors for rofi from xresources
-	selbg_xresources=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	actbg_xresources=$(sed -n -e 's/^\s*\*.\?color2\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	urgbg_xresources=$(sed -n -e 's/^\s*\*.\?color1\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 	# sed -n -e "s/\(^\s*background-color\s*:\s*\)[#[:alnum:]]\+;/\1#282828/p" config.rasi
 	sed -i -e "s/\(^\s*background-color\s*:\s*\)[#[:alnum:]]\+;/\1${background_xresources};/" "${rofi_config}"
 	sed -i -e "s/\(^\s*text-color\s*:\s*\)[#[:alnum:]]\+;/\1${foreground_xresources};/" "${rofi_config}"
-	sed -i -e "s/\(^\s*selbg\s*:\s*\)[#[:alnum:]]\+;/\1${selbg_xresources};/" "${rofi_config}"
-	sed -i -e "s/\(^\s*actbg\s*:\s*\)[#[:alnum:]]\+;/\1${actbg_xresources};/" "${rofi_config}"
-	sed -i -e "s/\(^\s*urgbg\s*:\s*\)[#[:alnum:]]\+;/\1${urgbg_xresources};/" "${rofi_config}"
+	sed -i -e "s/\(^\s*selbg\s*:\s*\)[#[:alnum:]]\+;/\1${color8};/" "${rofi_config}"
+	sed -i -e "s/\(^\s*actbg\s*:\s*\)[#[:alnum:]]\+;/\1${color2};/" "${rofi_config}"
+	sed -i -e "s/\(^\s*urgbg\s*:\s*\)[#[:alnum:]]\+;/\1${color1};/" "${rofi_config}"
 	sed -i -e "s/\(^\s*winbg\s*:\s*\)[#[:alnum:]]\+;/\1${background_xresources};/" "${rofi_config}"
 
 	# print rofi changed color ouptut
@@ -171,21 +164,15 @@ function change_colorscheme_bspwm() {
 }
 
 function change_colorscheme_dmenu() {
-	schemesel2=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	schemeselhighlight2=$(sed -n -e 's/^\s*\*.\?color4\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	schemenormhighlight1=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	schemeout2=$(sed -n -e 's/^\s*\*.\?color12\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	schememid2=$(sed -n -e 's/^\s*\*.\?color2\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-
 	sed -i -e "s/\(^\s*\[SchemeNorm\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${foreground_xresources}\"\2/" "${dmenu_config}"
 	sed -i -e "s/\(^\s*\[SchemeNorm\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${background_xresources}\"/" "${dmenu_config}"
 	sed -i -e "s/\(^\s*\[SchemeSel\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${foreground_xresources}\"\2/" "${dmenu_config}"
-	sed -i -e "s/\(^\s*\[SchemeSel\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemesel2}\"/" "${dmenu_config}"
-	sed -i -e "s/\(^\s*\[SchemeSelHighlight\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemeselhighlight2}\"/" "${dmenu_config}"
-	sed -i -e "s/\(^\s*\[SchemeNormHighlight\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${schemenormhighlight1}\"\2/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeSel\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color8}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeSelHighlight\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color4}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeNormHighlight\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${color14}\"\2/" "${dmenu_config}"
 	sed -i -e "s/\(^\s*\[SchemeOut\].*{\s*\)\"[#[:alnum:]]\+\"\(.*$\)/\1\"${background_xresources}\"\2/" "${dmenu_config}"
-	sed -i -e "s/\(^\s*\[SchemeOut\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schemeout2}\"/" "${dmenu_config}"
-	sed -i -e "s/\(^\s*\[SchemeMid\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${schememid2}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeOut\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color12}\"/" "${dmenu_config}"
+	sed -i -e "s/\(^\s*\[SchemeMid\].*{.*\)\"[#[:alnum:]]\+\"/\1\"${color2}\"/" "${dmenu_config}"
 
 	printf "\nColors after changing:\n\n"
 	printf "%s\n" "$(sed -n -e "/^\s*\[SchemeNorm\].*/p" "${dmenu_config}")"
@@ -201,17 +188,6 @@ function change_colorscheme_dmenu() {
 }
 
 function change_colorscheme_zathura() {
-	background_xresources=$(sed -n -e 's/^\s*\*.\?background\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	foreground_xresources=$(sed -n -e 's/^\s*\*.\?foreground\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color8=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color14=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color1=$(sed -n -e 's/^\s*\*.\?color1\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color0=$(sed -n -e 's/^\s*\*.\?color0\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color5=$(sed -n -e 's/^\s*\*.\?color5\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color8=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color11=$(sed -n -e 's/^\s*\*.\?color11\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-	color4=$(sed -n -e 's/^\s*\*.\?color4\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
-
 	sed -i -e "s/\(.*default-bg\s*\)\".*\"/\1\"${background_xresources}\"/" "${zathura_config}"
 	sed -i -e "s/\(.*default-fg\s*\)\".*\"/\1\"${foreground_xresources}\"/" "${zathura_config}"
 	sed -i -e "s/\(.*statusbar-bg\s*\)\".*\"/\1\"${color8}\"/" "${zathura_config}"
@@ -256,14 +232,32 @@ function change_colorschemes() {
 	change_colorscheme_terminal
 	change_colorscheme_xresources
 
-	# since these two color codes are used too much, makes sense to use globally
+	# get all the colors from Xresources, since most of the colors are used in functions few times
+	# so, this would reduce time
 	background_xresources=$(sed -n -e 's/^\s*\*.\?background\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 	foreground_xresources=$(sed -n -e 's/^\s*\*.\?foreground\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color0=$(sed -n -e 's/^\s*\*.\?color0\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color1=$(sed -n -e 's/^\s*\*.\?color1\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color2=$(sed -n -e 's/^\s*\*.\?color2\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color3=$(sed -n -e 's/^\s*\*.\?color3\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color4=$(sed -n -e 's/^\s*\*.\?color4\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color5=$(sed -n -e 's/^\s*\*.\?color5\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color6=$(sed -n -e 's/^\s*\*.\?color6\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color7=$(sed -n -e 's/^\s*\*.\?color7\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color8=$(sed -n -e 's/^\s*\*.\?color8\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color9=$(sed -n -e 's/^\s*\*.\?color9\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color10=$(sed -n -e 's/^\s*\*.\?color10\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color11=$(sed -n -e 's/^\s*\*.\?color11\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color12=$(sed -n -e 's/^\s*\*.\?color12\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color13=$(sed -n -e 's/^\s*\*.\?color13\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color14=$(sed -n -e 's/^\s*\*.\?color14\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
+	color15=$(sed -n -e 's/^\s*\*.\?color15\s*:\s*\([#a-fA-F0-9]\+$\)/\1/p' ~/.Xresources)
 
 	change_colorscheme_bspwm
 	change_colorscheme_dmenu
 	change_colorscheme_dunst
 	change_colorscheme_rofi
+	change_colorscheme_zathura
 
 	#if [[ "${USER}" = root ]]; then
 		#change_colorscheme_dmenu
