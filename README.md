@@ -19,10 +19,17 @@ Watch this little demo:
 	- polybar
 * **Laucher:**
 	- rofi
-* **Notification Daemon**:
+	- dmenu
+* **Notification Daemon:**
 	- dunst
+* **WM:**
+	- bspwm
+* **bar:**
+	- polybar
+* **reader**:
+	- zathura
 
-> Support for dmenu will come soon
+> Support for dmenu automatic compilation will come soon, currently you have to manually compile dmenu after running this script
 
 
 ```
@@ -41,9 +48,21 @@ Note:
 * [Xresources](https://github.com/coolabhays/my-config-files/tree/master/.config/xresources_colors)
 
 
+My config files for other tools are as follow:
+
+* [rofi](https://github.com/coolabhays/my-config-files/tree/master/.config/rofi)
+* [dmenu](https://github.com/coolabhays/my-config-files/tree/master/.config/)
+* [dunst](https://github.com/coolabhays/dmenu_custom)
+* [zathura](https://github.com/coolabhays/my-config-files/tree/master/.config/zathura)
+* [bspwm](https://github.com/coolabhays/my-config-files/tree/master/.config/bspwm)
+* [polybar](https://github.com/coolabhays/my-config-files/tree/master/.config/polybar)
+
+
 ## dependencies:
 
 * gnu-sed
 * fzf
 * find
 * tools which you want to change theme of
+
+Also, if you are not using `fzf`(can't find fzf if in your `PATH`) then `select` will be used for theme choosing
