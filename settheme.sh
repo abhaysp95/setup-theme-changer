@@ -2,7 +2,6 @@
 
 # TODO:
 # add support to compile dmenu
-# add verbose and non-verbose mode
 # add support for select in case user don't have fzf
 
 # check if colorscheme name file exist(update it)
